@@ -157,10 +157,10 @@ def get_price(request, pymortar_client):
     if datetime_end < csv_end_date:
         df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper())
     elif datetime_start > csv_end_date:
-        df = get_from_pymortar(datetime_start, datetime_end, uuid, pymortar_client).tz_localize(pytz.utc)
+        df = get_from_pymortar(datetime_start, datetime_end, uuid, pymortar_client)
     elif datetime_start < csv_end_date and datetime_end > csv_end_date:
         df_csv = get_from_csv(datetime_start, csv_end_date, key, uuid, request.price_type.upper())
-        df_pymortar = get_from_pymortar(csv_end_date + datetime.timedelta(hours=1), datetime_end, uuid, pymortar_client).tz_localize(pytz.utc)
+        df_pymortar = get_from_pymortar(csv_end_date + datetime.timedelta(hours=1), datetime_end, uuid, pymortar_client)
         df = pd.concat([df_csv, df_pymortar])
     
     if df is None:
@@ -171,7 +171,7 @@ def get_price(request, pymortar_client):
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
     
-    interpolated_df = smart_resample(df, datetime_start, datetime_end, duration, "interpolate")
+    interpolated_df = smart_resample(df, datetime_start, datetime_end, duration, "ffill")
 
     prices = []
     for index, row in interpolated_df.iterrows():
