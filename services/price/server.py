@@ -151,8 +151,8 @@ def get_price(request, pymortar_client):
     #Aligned returns invalid (next) price (we request the equivalent of RAW) 
    
     csv_end_date = datetime.datetime(2019, 4, 17, 23, 0, 0).replace(tzinfo=pytz.utc)
-    datetime_end = datetime.datetime.fromtimestamp(int(end / 1e9)).replace(tzinfo=pytz.utc)
-    datetime_start = datetime.datetime.fromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
+    datetime_end = datetime.datetime.utcfromtimestamp(int(end / 1e9)).replace(tzinfo=pytz.utc)
+    datetime_start = datetime.datetime.utcfromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
 
     if datetime_end < csv_end_date:
         df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper())
